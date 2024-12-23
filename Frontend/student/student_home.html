@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Home</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .department-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .department-item {
+            background: #e7f3fe;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 4px;
+            transition: background 0.3s;
+            cursor: pointer;
+        }
+
+        .department-item:hover {
+            background: #d1e9ff;
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #888;
+        }
+
+        #logout-button {
+            background-color: gray; /* Color for logout button */
+            color: white; /* White text */
+            border: none; /* No border */
+            padding: 10px 15px; /* Padding for better appearance */
+            border-radius: 4px; /* Rounded corners */
+            cursor: pointer; /* Pointer cursor on hover */
+            margin-bottom: 20px; /* Space below the button */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button id="logout-button">Logout</button> <!-- Logout Button -->
+        <h1>Welcome, Student!</h1>
+        <p>This is your homepage.</p>
+
+        <h2>Departments</h2>
+        <ul class="department-list">
+            <li class="department-item" onclick="location.href='regulation.html'">Computer Science Engineering (CSE)</li>
+            <li class="department-item" onclick="location.href='regulation.html'">Electronics and Communication Engineering (ECE)</li>
+            <li class="department-item" onclick="location.href='regulation.html'">Electrical and Electronics Engineering (EEE)</li>
+            <li class="department-item" onclick="location.href='regulation.html'">Mechanical Engineering (ME)</li>
+            <li class="department-item" onclick="location.href='regulation.html'">Civil Engineering (CE)</li>
+        </ul>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2024 Sona College of Technology</p>
+    </div>
+
+    <script src="../teacher/logout.js"></script> <!-- Include the logout script -->
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Basic styles for the loading spinner */
+        .loader {
+            display: none;
+            border: 5px solid #f3f3f3; /* Light gray */
+            border-top: 5px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .message {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Login</h1>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+            <div class="loader" id="loader"></div>
+        </form>
+        <div id="message" class="message"></div>
+    </div>
+    <script type="module">
+        import API_BASE_URL from './apiConfig.js'; // Ensure the correct path to apiConfig.js
+
+        const messageDiv = document.getElementById("message");
+        const loader = document.getElementById("loader");
+
+        document.getElementById("loginForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value.trim();
+
+            // Clear previous messages
+            messageDiv.textContent = '';
+            loader.style.display = 'block'; // Show loader
+
+            try {
+                // Input validation
+                if (!username || !password) {
+                    throw new Error("Both fields are required.");
+                }
+
+                const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email: username, password: password })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.msg || 'Login failed');
+                }
+
+                // Store token if necessary
+                localStorage.setItem('token', data.token); // Store token if returned
+
+                // Redirect based on role
+                if (data.role === 'student') {
+                    window.location.href = "student/student_home.html"; // Redirect to student homepage
+                } else if (data.role === 'teacher') {
+                    window.location.href = "teacher/teacher_home.html"; // Redirect to teacher homepage
+                }
+            } catch (error) {
+                messageDiv.textContent = error.message;
+            } finally {
+                loader.style.display = 'none'; // Hide loader
+            }
+        });
+
+        // Clear message on input change
+        document.querySelectorAll('#username, #password').forEach(input => {
+            input.addEventListener('input', () => {
+                messageDiv.textContent = '';
+            });
+        });
+    </script>
+</body>
+</html>

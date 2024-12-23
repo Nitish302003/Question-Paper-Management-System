@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subject Details</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        .question-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .delete-button {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #upload-button {
+            background-color: blue;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #upload-form {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .loader {
+            display: none;
+            border: 5px solid #f3f3f3; /* Light gray */
+            border-top: 5px solid #3498db; /* Blue for upload */
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        .delete-loader {
+            display: none;
+            border: 5px solid #f3f3f3; /* Light gray */
+            border-top: 5px solid red; /* Red for delete */
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="subject-name"></h1>
+        <p>Department: <span id="department-name"></span></p>
+
+        <h2>Uploaded Question Papers</h2>
+        <div class="question-list" id="question-list"></div>
+
+        <button id="upload-button">Upload Question Paper</button>
+        <div class="loader" id="upload-loader"></div>
+
+        <form id="upload-form">
+            <input type="file" id="file-input" accept=".pdf" required>
+            <input type="text" id="title-input" placeholder="Title" required>
+            <input type="text" id="subject-input" placeholder="Subject" required>
+            <button type="submit">Submit</button>
+            <button type="button" id="cancel-button">Cancel</button>
+        </form>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2024 Sona College of Technology</p>
+    </div>
+
+    <script>
+        // Function to get query parameters
+        function getQueryParams() {
+            const params = {};
+            const queryString = window.location.search.substring(1);
+            const queries = queryString.split("&");
+            queries.forEach(query => {
+                const [key, value] = query.split("=");
+                params[decodeURIComponent(key)] = decodeURIComponent(value);
+            });
+            return params;
+        }
+
+        // Fetch and display question papers
+        async function fetchQuestionPapers(subject) {
+            const token = localStorage.getItem('token'); // Fetch token from localStorage
+            const response = await fetch(`https://question-paper-backend-1.onrender.com/api/question/subject/${subject}`, {
+                method: 'GET',
+                headers: {
+                    'x-auth-token': token
+                }
+            });
+
+            const papers = await response.json();
+            const questionList = document.getElementById("question-list");
+            questionList.innerHTML = ""; // Clear existing list
+
+            papers.forEach(paper => {
+                const paperItem = document.createElement("div");
+                paperItem.className = "question-item";
+                paperItem.innerHTML = `
+                    <span>${paper.title} (${new Date(paper.createdAt).getFullYear()})</span>
+                    <div class="actions">
+                        <button onclick="viewPaper('${paper.filePath}')">View</button>
+                        <button class="delete-button" onclick="deletePaper('${paper._id}')">Delete</button>
+                        <div class="delete-loader" id="delete-loader-${paper._id}"></div>
+                    </div>
+                `;
+                questionList.appendChild(paperItem);
+            });
+        }
+
+        // Delete a question paper
+        async function deletePaper(id) {
+            const token = localStorage.getItem('token'); // Fetch token from localStorage
+            const loader = document.getElementById(`delete-loader-${id}`);
+            loader.style.display = 'inline-block'; // Show loader
+
+            const response = await fetch(`https://question-paper-backend-1.onrender.com/api/question/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'x-auth-token': token
+                }
+            });
+
+            loader.style.display = 'none'; // Hide loader
+
+            if (response.ok) {
+                alert('Question paper deleted successfully');
+                const params = getQueryParams();
+                await fetchQuestionPapers(params.name); // Refresh the list
+            } else {
+                const errorText = await response.text();
+                if (errorText.includes("Token is not valid")) {
+                    alert("Your session has expired. Please log in again.");
+                    localStorage.removeItem('token'); // Clear invalid token
+                    window.location.href = '../index.html'; // Adjust the path as necessary
+                } else {
+                    alert(`Failed to delete question paper: ${errorText}`);
+                }
+            }
+        }
+
+        // Set the subject and department names based on URL parameters
+        document.addEventListener("DOMContentLoaded", async () => {
+            const params = getQueryParams();
+            document.getElementById("subject-name").innerText = params.name;
+            document.getElementById("department-name").innerText = params.department;
+            document.getElementById("subject-input").value = params.name;
+
+            // Fetch question papers for the subject
+            await fetchQuestionPapers(params.name);
+        });
+
+        function viewPaper(filePath) {
+            const formattedPath = filePath.replace(/\\/g, '/');
+            const fullPath = `https://question-paper-backend-1.onrender.com/uploads/${formattedPath}`;
+            window.open(fullPath, '_blank');
+        }
+
+        // Show upload form
+        document.getElementById('upload-button').addEventListener('click', () => {
+            document.getElementById('upload-form').style.display = 'block';
+        });
+
+        // Handle upload form submission
+        document.getElementById('upload-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            const params = getQueryParams();
+            const token = localStorage.getItem('token'); // Fetch token from localStorage
+            const uploadLoader = document.getElementById('upload-loader');
+
+            uploadLoader.style.display = 'inline-block'; // Show upload loader
+
+            formData.append('questionPaper', document.getElementById('file-input').files[0]);
+            formData.append('title', document.getElementById('title-input').value);
+            formData.append('subject', params.name);
+
+            const response = await fetch('https://question-paper-backend-1.onrender.com/api/question/upload', {
+                method: 'POST',
+                headers: {
+                    'x-auth-token': token,
+                },
+                body: formData
+            });
+
+            uploadLoader.style.display = 'none'; // Hide upload loader
+
+            if (response.ok) {
+                alert('Question paper uploaded successfully');
+                document.getElementById('upload-form').reset();
+                document.getElementById('upload-form').style.display = 'none';
+                await fetchQuestionPapers(params.name);
+            } else {
+                const errorText = await response.text();
+                alert(`Failed to upload question paper: ${errorText}`);
+            }
+        });
+
+        // Handle cancel button
+        document.getElementById('cancel-button').addEventListener('click', () => {
+            document.getElementById('upload-form').reset();
+            document.getElementById('upload-form').style.display = 'none';
+        });
+    </script>
+</body>
+</html>

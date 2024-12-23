@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semesters</title>
+    <!-- <link rel="stylesheet" href="../styles.css"> -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .semester-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .semester-item {
+            background: #e7f3fe;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .semester-item:hover {
+            background: #d1e9ff;
+        }
+
+        .subjects {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background: #f0f8ff;
+            border-radius: 4px;
+        }
+
+        .subject-link {
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        .subject-link:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #888;
+        }
+
+        #logout-button {
+            background-color: gray; /* Color for logout button */
+            color: white; /* White text */
+            border: none; /* No border */
+            padding: 10px 15px; /* Padding for better appearance */
+            border-radius: 4px; /* Rounded corners */
+            cursor: pointer; /* Pointer cursor on hover */
+            margin-bottom: 20px; /* Space below the button */
+        }
+    </style>
+    <script>
+        function toggleSubjects(sem) {
+            const subjects = document.getElementById(`subjects-${sem}`);
+            subjects.style.display = subjects.style.display === "block" ? "none" : "block";
+        }
+
+        function logout() {
+            // Clear user token and any other session data
+            localStorage.removeItem('token');
+            
+            // Redirect to the index page
+            window.location.href = '../index.html'; // Update to redirect to index.html
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <button id="logout-button" onclick="logout()">Logout</button> <!-- Logout Button -->
+       
+        <h1>Semesters</h1>
+
+        <h2>Available Semesters</h2>
+        <ul class="semester-list">
+            <li class="semester-item" onclick="toggleSubjects(1)">Semester 1</li>
+            <div id="subjects-1" class="subjects">
+                <ul>
+                    <li><a class="subject-link" href="subject.html?name=Programming Fundamentals&department=CSE">Programming Fundamentals</a></li>
+                    <li><a class="subject-link" href="subject.html?name=Mathematics I&department=CSE">Mathematics I</a></li>
+                    <li><a class="subject-link" href="subject.html?name=Engineering Physics&department=CSE">Engineering Physics</a></li>
+                </ul>
+            </div>
+
+            <li class="semester-item" onclick="toggleSubjects(2)">Semester 2</li>
+            <div id="subjects-2" class="subjects">
+                <ul>
+                    <li><a class="subject-link" href="subject.html?name=Data Structures&department=CSE">Data Structures</a></li>
+                    <li><a class="subject-link" href="subject.html?name=Mathematics II&department=CSE">Mathematics II</a></li>
+                    <li><a class="subject-link" href="subject.html?name=Digital Logic Design&department=CSE">Digital Logic Design</a></li>
+                </ul>
+            </div>
+
+            <li class="semester-item" onclick="toggleSubjects(3)">Semester 3</li>
+            <div id="subjects-3" class="subjects">
+                <ul>
+                    <li><a class="subject-link" href="subject.html?name=Computer Organization&department=CSE">Computer Organization</a></li>
+                    <li><a class="subject-link" href="subject.html?name=Object-Oriented Programming&department=CSE">Object-Oriented Programming</a></li>
+                    <li><a class="subject-link" href="subject.html?name=Database Management Systems&department=CSE">Database Management Systems</a></li>
+                </ul>
+            </div>
+
+            <li class="semester-item" onclick="toggleSubjects(4)">Semester 4</li>
+            <div id="subjects-4" class="subjects">
+                <ul>
+                    <li><a class="subject-link" href="subject.html?name=Operating Systems&department=CSE">Operating Systems</a></li>
+                    <li><a class="subject-link" href="subject.html?name=Software Engineering&department=CSE">Software Engineering</a></li>
+                    <li><a class="subject-link" href="subject.html?name=Theory of Computation&department=CSE">Theory of Computation</a></li>
+                </ul>
+            </div>
+
+            <li class="semester-item" onclick="toggleSubjects(5)">Semester 5</li>
+            <div id="subjects-5" class="subjects">
+                <ul>
+                    <li><a class="subject-link" href="subject.html?name=Web Technologies&department=CSE">Web Technologies</a></li>
+                    <li><a class="subject-link" href="subject.html?name=Computer Networks&department=CSE">Computer Networks</a></li>
+                    <li><a class="subject-link" href="subject.html?name=Compiler Design&department=CSE">Compiler Design</a></li>
+                </ul>
+            </div>
+
+            <li class="semester-item" onclick="toggleSubjects(6)">Semester 6</li>
+            <div id="subjects-6" class="subjects">
+                <ul>
+                    <li><a class="subject-link" href="subject.html?name=Mobile Application Development&department=CSE">Mobile Application Development</a></li>
+                    <li><a class="subject-link" href="subject.html?name=Data Mining&department=CSE">Data Mining</a></li>
+                    <li><a class="subject-link" href="subject.html?name=Artificial Intelligence&department=CSE">Artificial Intelligence</a></li>
+                </ul>
+            </div>
+
+            <li class="semester-item" onclick="toggleSubjects(7)">Semester 7</li>
+            <div id="subjects-7" class="subjects">
+                <ul>
+                    <li><a class="subject-link" href="subject.html?name=Cloud Computing&department=CSE">Cloud Computing</a></li>
+                    <li><a class="subject-link" href="subject.html?name=Cybersecurity&department=CSE">Cybersecurity</a></li>
+                    <li><a class="subject-link" href="subject.html?name=Distributed Systems&department=CSE">Distributed Systems</a></li>
+                </ul>
+            </div>
+
+            <li class="semester-item" onclick="toggleSubjects(8)">Semester 8</li>
+            <div id="subjects-8" class="subjects">
+                <ul>
+                    <li><a class="subject-link" href="subject.html?name=Machine Learning&department=CSE">Machine Learning</a></li>
+                    <li><a class="subject-link" href="subject.html?name=Internet of Things&department=CSE">Internet of Things</a></li>
+                    <li><a class="subject-link" href="subject.html?name=Capstone Project&department=CSE">Capstone Project</a></li>
+                </ul>
+            </div>
+        </ul>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2024 Sona College of Technology</p>
+    </div>
+</body>
+</html>
